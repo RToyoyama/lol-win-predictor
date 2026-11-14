@@ -24,8 +24,8 @@ train: ## Baselines + modelos com CV 5-fold no treino (MLflow)
 mlflow-ui: ## Abre a interface do MLflow
 	$(UV) mlflow ui --backend-store-uri sqlite:///mlflow.db
 
-tune: ## Tuning com Optuna
-	@echo "TODO: Etapa 6"
+tune: ## Tuning (Optuna) de LR e LightGBM minimizando log loss na CV
+	$(UV) python -m lol_win.models.tune
 
 evaluate: ## Calibração e avaliação final no teste
 	@echo "TODO: Etapa 6"

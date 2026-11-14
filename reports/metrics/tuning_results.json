@@ -1,0 +1,72 @@
+{
+  "logreg": {
+    "model": "logreg",
+    "feature_set": "diffs_core",
+    "params": {
+      "C": 0.2426998720695088,
+      "l1_ratio": 0.9753508296146155,
+      "solver": "saga",
+      "max_iter": 5000
+    },
+    "metrics": {
+      "test_roc_auc_mean": 0.8120479739763689,
+      "test_roc_auc_std": 0.008303386378154627,
+      "test_log_loss_mean": 0.5283985784256063,
+      "test_log_loss_std": 0.008657151586575203,
+      "test_brier_mean": 0.17717083423083974,
+      "test_brier_std": 0.003760267000033452,
+      "test_accuracy_mean": 0.736934402997622,
+      "test_accuracy_std": 0.012307257238901742,
+      "test_f1_mean": 0.7364129647975602,
+      "test_f1_std": 0.01393230311895281,
+      "train_roc_auc_mean": 0.8130408049222642,
+      "train_roc_auc_std": 0.0019202777861092961,
+      "train_log_loss_mean": 0.5267470120466629,
+      "train_log_loss_std": 0.002086342084227248,
+      "train_brier_mean": 0.17649162771840513,
+      "train_brier_std": 0.0009095409937187782,
+      "train_accuracy_mean": 0.7387700647265625,
+      "train_accuracy_std": 0.002857053907285876,
+      "train_f1_mean": 0.7383246575244289,
+      "train_f1_std": 0.0026967485162418645
+    },
+    "n_trials": 50
+  },
+  "lightgbm": {
+    "model": "lightgbm",
+    "feature_set": "diffs_core",
+    "params": {
+      "n_estimators": 450,
+      "learning_rate": 0.01281176946332838,
+      "num_leaves": 4,
+      "min_child_samples": 26,
+      "reg_lambda": 0.07078418806098404,
+      "reg_alpha": 0.35893689165142173,
+      "subsample": 0.5846447460458785,
+      "colsample_bytree": 0.6233150394534837
+    },
+    "metrics": {
+      "test_roc_auc_mean": 0.809658841461655,
+      "test_roc_auc_std": 0.008061385353868222,
+      "test_log_loss_mean": 0.5327840096301666,
+      "test_log_loss_std": 0.008910041847865596,
+      "test_brier_mean": 0.1785105748495547,
+      "test_brier_std": 0.0037309478301662063,
+      "test_accuracy_mean": 0.7321251571269585,
+      "test_accuracy_std": 0.012535142524652943,
+      "test_f1_mean": 0.7287661287861696,
+      "test_f1_std": 0.014116458425852286,
+      "train_roc_auc_mean": 0.8183038929241931,
+      "train_roc_auc_std": 0.002054786234829985,
+      "train_log_loss_mean": 0.520320978451327,
+      "train_log_loss_std": 0.0024411110502719153,
+      "train_brier_mean": 0.17399115743681434,
+      "train_brier_std": 0.0009813109288121986,
+      "train_accuracy_mean": 0.7400037214183637,
+      "train_accuracy_std": 0.0034984475127491513,
+      "train_f1_mean": 0.7373681122691771,
+      "train_f1_std": 0.0036716016148571327
+    },
+    "n_trials": 100
+  }
+}
