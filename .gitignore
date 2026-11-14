@@ -1,0 +1,58 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# ---------- Ambientes / uv ----------
+.venv/
+venv/
+.python-version.local
+
+# ---------- Ferramentas de qualidade / testes ----------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# ---------- Notebooks ----------
+# Outputs dos notebooks SÃO versionados (decisão do projeto); só ignora checkpoints.
+.ipynb_checkpoints/
+
+# ---------- Dados (raw é versionado; camadas derivadas são regeneráveis) ----------
+data/bronze/*
+data/silver/*
+data/gold/*
+!data/*/.gitkeep
+# Metadados que o Windows anexa a arquivos baixados (WSL)
+*:Zone.Identifier
+
+# ---------- Experimentos e artefatos de modelo ----------
+mlruns/
+mlartifacts/
+mlflow.db
+models/*
+!models/.gitkeep
+catboost_info/
+optuna*.db
+
+# ---------- Segredos ----------
+.env
+.env.*
+!.env.example
+
+# ---------- IDEs / SO ----------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---------- Streamlit ----------
+.streamlit/secrets.toml
