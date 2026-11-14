@@ -1,0 +1,7 @@
+variant,model,calibration,roc_auc,log_loss,brier,accuracy,f1,ece
+logreg · none,logreg,none,0.81157,0.52840,0.17717,0.73694,0.73654,0.00843
+logreg · sigmoid,logreg,sigmoid,0.81155,0.52843,0.17719,0.73643,0.73610,0.00760
+lightgbm · none,lightgbm,none,0.80859,0.53278,0.17851,0.73213,0.72890,0.00381
+lightgbm · sigmoid,lightgbm,sigmoid,0.80835,0.53303,0.17861,0.73365,0.73078,0.00679
+lightgbm · isotonic,lightgbm,isotonic,0.80749,0.53897,0.17903,0.73289,0.73112,0.00977
+logreg · isotonic,logreg,isotonic,0.80955,0.55086,0.17795,0.73694,0.73573,0.01042

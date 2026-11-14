@@ -1,0 +1,54 @@
+{
+  "chosen": "logreg · none",
+  "selection_rule": "variante mais simples com log loss OOF a até 1 desvio-padrão da CV do melhor; LR < LightGBM; sem calibração < sigmoid < isotônica",
+  "log_loss_tolerance": 0.008910041847865596,
+  "test": {
+    "roc_auc": {
+      "value": 0.80666,
+      "ci_low": 0.78926,
+      "ci_high": 0.82478
+    },
+    "log_loss": {
+      "value": 0.531,
+      "ci_low": 0.51041,
+      "ci_high": 0.55131
+    },
+    "brier": {
+      "value": 0.17955,
+      "ci_low": 0.17092,
+      "ci_high": 0.18771
+    },
+    "accuracy": {
+      "value": 0.71711,
+      "ci_low": 0.69889,
+      "ci_high": 0.73583
+    },
+    "f1": {
+      "value": 0.71839,
+      "ci_low": 0.69713,
+      "ci_high": 0.74034
+    }
+  },
+  "test_ece": 0.026702622833404244,
+  "cv_train": {
+    "roc_auc": 0.8120479739763689,
+    "log_loss": 0.5283985784256063,
+    "brier": 0.17717083423083974,
+    "accuracy": 0.736934402997622,
+    "f1": 0.7364129647975602
+  },
+  "gold_rule_test": {
+    "roc_auc": 0.7179620751121765,
+    "log_loss": 10.160429192772678,
+    "brier": 0.2820091093117409,
+    "accuracy": 0.7176113360323887,
+    "f1": 0.7158859470468432
+  },
+  "n_train": 7903,
+  "n_test": 1976,
+  "mlflow": {
+    "run_id": "ca99e436a8c24d01a4906fa8f4519c22",
+    "registered_model": "lol-win-predictor",
+    "version": "1"
+  }
+}

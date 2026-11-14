@@ -53,3 +53,10 @@ INPUT_COLUMNS: Final[tuple[str, ...]] = (
     *(f"{side}_{stat}" for side in SIDES for stat in TEAM_STATS),
 )
 WARDS_CAP_QUANTILE: Final[float] = 0.99
+
+MODEL_PATH: Final[Path] = MODELS_DIR / "model.joblib"
+MODEL_METADATA_PATH: Final[Path] = MODELS_DIR / "metadata.json"
+FINAL_METRICS_PATH: Final[Path] = METRICS_DIR / "final.json"
+MLFLOW_MODEL_NAME: Final[str] = "lol-win-predictor"
+MLFLOW_MODEL_ALIAS: Final[str] = "champion"
+AUC_LEAKAGE_ALARM: Final[float] = 0.85

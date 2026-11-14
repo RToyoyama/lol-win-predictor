@@ -27,8 +27,8 @@ mlflow-ui: ## Abre a interface do MLflow
 tune: ## Tuning (Optuna) de LR e LightGBM minimizando log loss na CV
 	$(UV) python -m lol_win.models.tune
 
-evaluate: ## Calibração e avaliação final no teste
-	@echo "TODO: Etapa 6"
+evaluate: ## Calibração, escolha final, avaliação no teste, registry e export
+	$(UV) python -m lol_win.models.final
 
 api: ## Sobe a API FastAPI
 	$(UV) uvicorn lol_win.api.main:app --reload
