@@ -120,3 +120,10 @@ def test_feature_pipeline_end_to_end_and_clonable() -> None:
         features__feature_set="diffs_abs", clip_wards__quantile=None
     )
     assert cloned.fit_transform(stats).shape[1] == 3 * len(TEAM_STATS) + 1
+
+
+def test_diffs_core_excludes_vision_and_first_blood() -> None:
+    features = build_features(_random_stats(), "diffs_core")
+    assert "blue_first_blood" not in features.columns
+    assert not any(col.startswith("wards_") for col in features.columns)
+    assert "total_gold_diff" in features.columns

@@ -28,7 +28,9 @@ REPORTS_DIR: Final[Path] = PROJECT_ROOT / "reports"
 FIGURES_DIR: Final[Path] = REPORTS_DIR / "figures"
 METRICS_DIR: Final[Path] = REPORTS_DIR / "metrics"
 
-MLFLOW_TRACKING_URI: Final[str] = MLRUNS_DIR.as_uri()
+MLFLOW_DB: Final[Path] = PROJECT_ROOT / "mlflow.db"
+MLFLOW_TRACKING_URI: Final[str] = f"sqlite:///{MLFLOW_DB}"
+MLFLOW_ARTIFACTS_DIR: Final[Path] = MLRUNS_DIR
 MLFLOW_EXPERIMENT: Final[str] = "lol-win-predictor"
 
 SIDES: Final[tuple[str, str]] = ("blue", "red")

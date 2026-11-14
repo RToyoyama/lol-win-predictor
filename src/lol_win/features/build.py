@@ -15,9 +15,10 @@ from sklearn.utils.validation import check_is_fitted
 
 from lol_win.config import INPUT_COLUMNS, SIDES, TEAM_STATS, WARDS_CAP_QUANTILE
 
-FeatureSet = Literal["diffs", "diffs_abs"]
+FeatureSet = Literal["diffs", "diffs_abs", "diffs_core"]
 FEATURE_SETS: Final[tuple[str, ...]] = get_args(FeatureSet)
 WARDS_COLUMNS: Final[tuple[str, str]] = ("blue_wards_placed", "red_wards_placed")
+CORE_EXCLUDED_STATS: Final[tuple[str, ...]] = ("wards_placed", "wards_destroyed")
 
 
 def side_diffs(df: pd.DataFrame, stats: Sequence[str] = TEAM_STATS) -> pd.DataFrame:
@@ -51,8 +52,10 @@ def build_features(stats: pd.DataFrame, feature_set: FeatureSet = "diffs") -> pd
 
     Args:
         stats: DataFrame com ``INPUT_COLUMNS`` (colunas extras são ignoradas).
-        feature_set: ``"diffs"`` (diferenças azul − vermelho + ``blue_first_blood``) ou
-            ``"diffs_abs"`` (as mesmas diffs + estatísticas absolutas de cada time).
+        feature_set: ``"diffs"`` (diferenças azul − vermelho + ``blue_first_blood``),
+            ``"diffs_abs"`` (as mesmas diffs + estatísticas absolutas de cada time) ou
+            ``"diffs_core"`` (diffs sem visão e sem first blood, que não tiveram efeito além do
+            gold no Notebook 02).
 
     Returns:
         DataFrame de features com o mesmo índice de ``stats``.
@@ -67,6 +70,8 @@ def build_features(stats: pd.DataFrame, feature_set: FeatureSet = "diffs") -> pd
     if missing:
         raise KeyError(f"Colunas de entrada ausentes: {sorted(missing)}")
 
+    if feature_set == "diffs_core":
+        return side_diffs(stats, [s for s in TEAM_STATS if s not in CORE_EXCLUDED_STATS])
     features = side_diffs(stats).assign(blue_first_blood=stats["blue_first_blood"])
     if feature_set == "diffs":
         return features
@@ -92,7 +97,7 @@ class WardsClipper(TransformerMixin, BaseEstimator):
         self.quantile = quantile
         self.columns = columns
 
-    def fit(self, X: pd.DataFrame, y: pd.Series | None = None) -> "WardsClipper":  # noqa: N803
+    def fit(self, X: pd.DataFrame, y: pd.Series | None = None) -> "WardsClipper":
         """Aprende o teto a partir dos dados de treino.
 
         Args:
@@ -119,7 +124,7 @@ class WardsClipper(TransformerMixin, BaseEstimator):
         check_is_fitted(self, "feature_names_in_")
         return self.feature_names_in_
 
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:  # noqa: N803
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Aplica o teto aprendido.
 
         Args:
@@ -145,7 +150,7 @@ class FeatureBuilder(TransformerMixin, BaseEstimator):
     def __init__(self, feature_set: FeatureSet = "diffs") -> None:
         self.feature_set = feature_set
 
-    def fit(self, X: pd.DataFrame, y: pd.Series | None = None) -> "FeatureBuilder":  # noqa: N803
+    def fit(self, X: pd.DataFrame, y: pd.Series | None = None) -> "FeatureBuilder":
         """Registra os nomes das features geradas.
 
         Args:
@@ -158,7 +163,7 @@ class FeatureBuilder(TransformerMixin, BaseEstimator):
         self.feature_names_out_ = build_features(X.head(1), self.feature_set).columns.to_numpy()
         return self
 
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:  # noqa: N803
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Calcula as features.
 
         Args:

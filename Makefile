@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help setup data features train tune evaluate api app test lint format docker-up
+.PHONY: help setup data features train mlflow-ui tune evaluate api app test lint format docker-up
 
 UV := uv run
 export MLFLOW_DISABLE_AGENT_HINT := 1
@@ -18,8 +18,11 @@ features: ## bronze -> silver -> gold (split treino/teste fixo)
 	$(UV) python -m lol_win.data.clean
 	$(UV) python -m lol_win.data.split
 
-train: ## Treina baselines e modelos com CV (MLflow)
-	@echo "TODO: Etapa 5"
+train: ## Baselines + modelos com CV 5-fold no treino (MLflow)
+	$(UV) python -m lol_win.models.train
+
+mlflow-ui: ## Abre a interface do MLflow
+	$(UV) mlflow ui --backend-store-uri sqlite:///mlflow.db
 
 tune: ## Tuning com Optuna
 	@echo "TODO: Etapa 6"

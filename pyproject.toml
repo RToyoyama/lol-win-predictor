@@ -53,7 +53,8 @@ extend-include = ["*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "D", "N", "PD", "NPY"]
-ignore = ["D100", "D104", "D105", "D107"]
+# N803/N806: permite `X` maiúsculo (convenção do scikit-learn para matriz de features)
+ignore = ["D100", "D104", "D105", "D107", "N803", "N806"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

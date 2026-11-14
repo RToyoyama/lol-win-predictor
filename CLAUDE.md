@@ -32,7 +32,7 @@ O autor joga LoL e entende o jogo — use vocabulário do jogo quando ajudar (go
 
 - Python 3.11 · gerenciador **uv** (`pyproject.toml`) · `src/` layout (pacote `lol_win`)
 - pandas, pyarrow, **pandera**, scikit-learn, lightgbm, optuna, shap, statsmodels, scipy
-- matplotlib/seaborn (notebooks), **mlflow** (local, `mlruns/`), joblib
+- matplotlib/seaborn (notebooks), **mlflow** (local: tracking em `sqlite:///mlflow.db`, artefatos em `mlruns/`; o backend só em arquivo dá erro no MLflow 3), joblib
 - **fastapi** + pydantic v2 + uvicorn · **streamlit**
 - pytest, ruff (lint + format), pre-commit · Docker + docker-compose (api + app) · GitHub Actions
 - **Fora de escopo (decisão consciente):** Spark, dbt, DuckDB, Airflow, Riot API, monitoramento de drift ativo (vira seção "como eu monitoraria em produção" no README).
