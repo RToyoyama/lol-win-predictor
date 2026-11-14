@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help setup data features train mlflow-ui tune evaluate api app test lint format docker-up docker-down export-model
+.PHONY: help setup pipeline data features train mlflow-ui tune evaluate api app test lint format docker-up docker-down export-model
 
 UV := uv run
 export MLFLOW_DISABLE_AGENT_HINT := 1
@@ -17,6 +17,8 @@ data: ## raw -> bronze (validado com Pandera)
 features: ## bronze -> silver -> gold (split treino/teste fixo)
 	$(UV) python -m lol_win.data.clean
 	$(UV) python -m lol_win.data.split
+
+pipeline: data features train tune evaluate ## Pipeline completo: dados → CV → tuning → avaliação final
 
 train: ## Baselines + modelos com CV 5-fold no treino (MLflow)
 	$(UV) python -m lol_win.models.train
