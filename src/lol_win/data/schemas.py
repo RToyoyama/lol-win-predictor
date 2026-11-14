@@ -6,7 +6,8 @@ import numpy as np
 import pandas as pd
 import pandera.pandas as pa
 
-SIDES: Final[tuple[str, str]] = ("blue", "red")
+from lol_win.config import SIDES
+
 MAX_TOWERS_PER_SIDE: Final[int] = 11
 MAX_CHAMPION_LEVEL: Final[int] = 18
 PLAYERS_PER_TEAM: Final[int] = 5
@@ -139,3 +140,54 @@ def build_bronze_schema() -> pa.DataFrameSchema:
 
 
 BRONZE_SCHEMA: Final[pa.DataFrameSchema] = build_bronze_schema()
+
+REDUNDANT_COLUMNS: Final[tuple[str, ...]] = (
+    *(
+        f"{side}_{name}"
+        for side in SIDES
+        for name in (
+            "deaths",
+            "elite_monsters",
+            "gold_diff",
+            "experience_diff",
+            "cs_per_min",
+            "gold_per_min",
+        )
+    ),
+    "red_first_blood",
+)
+
+
+def build_silver_schema() -> pa.DataFrameSchema:
+    """Monta o contrato da camada silver: bronze sem as colunas redundantes.
+
+    Mantém tipos e ranges da bronze e as regras que ainda podem ser verificadas sem as colunas
+    removidas.
+
+    Returns:
+        Schema estrito da camada silver.
+    """
+    columns = {
+        name: column
+        for name, column in BRONZE_SCHEMA.columns.items()
+        if name not in REDUNDANT_COLUMNS
+    }
+    checks = [
+        pa.Check(
+            lambda d: d["blue_dragons"] + d["red_dragons"] <= 1,
+            name="at_most_one_dragon_total",
+        ),
+        *(
+            pa.Check(
+                lambda d, s=side: _is_integer(d[f"{s}_avg_level"] * PLAYERS_PER_TEAM),
+                name=f"{side}_avg_level_is_mean_of_5",
+            )
+            for side in SIDES
+        ),
+    ]
+    return pa.DataFrameSchema(
+        columns=columns, checks=checks, strict=True, coerce=False, name="silver_matches"
+    )
+
+
+SILVER_SCHEMA: Final[pa.DataFrameSchema] = build_silver_schema()

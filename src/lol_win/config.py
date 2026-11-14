@@ -30,3 +30,24 @@ METRICS_DIR: Final[Path] = REPORTS_DIR / "metrics"
 
 MLFLOW_TRACKING_URI: Final[str] = MLRUNS_DIR.as_uri()
 MLFLOW_EXPERIMENT: Final[str] = "lol-win-predictor"
+
+SIDES: Final[tuple[str, str]] = ("blue", "red")
+TEAM_STATS: Final[tuple[str, ...]] = (
+    "wards_placed",
+    "wards_destroyed",
+    "kills",
+    "assists",
+    "dragons",
+    "heralds",
+    "towers_destroyed",
+    "total_minions_killed",
+    "total_jungle_minions_killed",
+    "total_gold",
+    "total_experience",
+    "avg_level",
+)
+INPUT_COLUMNS: Final[tuple[str, ...]] = (
+    "blue_first_blood",
+    *(f"{side}_{stat}" for side in SIDES for stat in TEAM_STATS),
+)
+WARDS_CAP_QUANTILE: Final[float] = 0.99

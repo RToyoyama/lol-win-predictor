@@ -49,15 +49,16 @@ O autor joga LoL e entende o jogo — use vocabulário do jogo quando ajudar (go
 ```
 raw    → CSV original, imutável
 bronze → tipado, colunas em snake_case, validado com Pandera (schema + checks de consistência da seção 2)
-silver → colunas redundantes removidas, features base limpas
-gold   → features de modelagem (diffs) + alvo; split treino/teste fixo
+silver → 13 colunas redundantes removidas (27 colunas: game_id, alvo, INPUT_COLUMNS), validado com Pandera
+gold   → silver dividido em treino/teste fixo (stats brutas + alvo; as features NÃO são materializadas)
 ```
 
 **Split:** holdout de teste **20% estratificado**, criado uma única vez na camada gold e salvo (`gold/train.parquet`, `gold/test.parquet`). O teste **só é usado na avaliação final** (Etapa 6). Toda seleção/tuning usa CV estratificada 5-fold no treino.
 
 **Features (ponto de partida, refinar na Etapa 4):** diferenças azul − vermelho de kills, assists, wards placed, wards destroyed, dragons, heralds, towers, minions (CS), jungle CS, gold, xp, avg level; `blue_first_blood`. Comparar conjunto "só diffs" vs "diffs + absolutos".
 
-**Regra anti training-serving skew:** a mesma função `build_features()` é usada no treino, na API e no app. A API recebe estatísticas brutas dos dois times aos 10 min e calcula as features internamente.
+**Regra anti training-serving skew:** o modelo é um `sklearn.Pipeline` que recebe as **estatísticas brutas** dos dois times (`config.INPUT_COLUMNS`) e calcula as features internamente: `WardsClipper` (teto p99 comum aos dois lados, aprendido só no fit) → `FeatureBuilder` (chama `build_features()`) → [scaler] → modelo. O artefato exportado contém toda a transformação; API e app só chamam `pipeline.predict_proba(stats_brutas)`.
+*(Decisão da Etapa 4, opção A: o cap de wards é no valor absoluto, então as diffs não podem ser pré-calculadas na gold.)*
 
 ## 5. Estrutura de pastas
 

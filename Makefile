@@ -14,8 +14,9 @@ setup: ## Instala dependências e hooks do pre-commit
 data: ## raw -> bronze (validado com Pandera)
 	$(UV) python -m lol_win.data.ingest
 
-features: ## bronze -> silver -> gold + split treino/teste
-	@echo "TODO: Etapa 4"
+features: ## bronze -> silver -> gold (split treino/teste fixo)
+	$(UV) python -m lol_win.data.clean
+	$(UV) python -m lol_win.data.split
 
 train: ## Treina baselines e modelos com CV (MLflow)
 	@echo "TODO: Etapa 5"
