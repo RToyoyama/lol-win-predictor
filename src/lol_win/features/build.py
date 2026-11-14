@@ -32,3 +32,16 @@ def side_diffs(df: pd.DataFrame, stats: Sequence[str] = DIFF_STATS) -> pd.DataFr
         DataFrame com colunas ``<stat>_diff``, mesmo índice de ``df``.
     """
     return pd.DataFrame({f"{stat}_diff": df[f"blue_{stat}"] - df[f"red_{stat}"] for stat in stats})
+
+
+def clip_upper(values: pd.Series, upper: float) -> pd.Series:
+    """Limita valores a um teto (winsorização superior).
+
+    Args:
+        values: Série numérica.
+        upper: Teto; valores acima viram ``upper``.
+
+    Returns:
+        Série com o mesmo índice e valores ``<= upper``.
+    """
+    return values.clip(upper=upper)
