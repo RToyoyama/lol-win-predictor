@@ -1,5 +1,6 @@
 """Constantes e caminhos centrais do projeto."""
 
+import os
 from pathlib import Path
 from typing import Final
 
@@ -54,8 +55,8 @@ INPUT_COLUMNS: Final[tuple[str, ...]] = (
 )
 WARDS_CAP_QUANTILE: Final[float] = 0.99
 
-MODEL_PATH: Final[Path] = MODELS_DIR / "model.joblib"
-MODEL_METADATA_PATH: Final[Path] = MODELS_DIR / "metadata.json"
+MODEL_PATH: Final[Path] = Path(os.environ.get("LOL_WIN_MODEL_PATH", MODELS_DIR / "model.joblib"))
+MODEL_METADATA_PATH: Final[Path] = MODEL_PATH.with_name("metadata.json")
 FINAL_METRICS_PATH: Final[Path] = METRICS_DIR / "final.json"
 MLFLOW_MODEL_NAME: Final[str] = "lol-win-predictor"
 MLFLOW_MODEL_ALIAS: Final[str] = "champion"

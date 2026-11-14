@@ -11,9 +11,8 @@ from sklearn.pipeline import Pipeline
 from statsmodels.stats.proportion import proportion_confint
 
 from lol_win.config import RANDOM_STATE
+from lol_win.models.predict import BAND_EDGES, BAND_LABELS
 
-BAND_EDGES: Final[tuple[float, ...]] = (0.0, 0.15, 0.35, 0.65, 0.85, 1.0)
-BAND_LABELS: Final[tuple[str, ...]] = ("<15%", "15–35%", "35–65%", "65–85%", ">85%")
 FEATURE_LABELS: Final[dict[str, str]] = {
     "total_gold_diff": "Gold",
     "total_experience_diff": "XP",
