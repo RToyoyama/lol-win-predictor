@@ -1,5 +1,6 @@
 """Etapa 6B: calibração, escolha final, avaliação única no teste, registro e exportação."""
 
+import argparse
 import json
 import logging
 import platform
@@ -22,6 +23,8 @@ from sklearn.metrics import RocCurveDisplay
 from lol_win.analysis.eda import save_figure
 from lol_win.config import (
     AUC_LEAKAGE_ALARM,
+    BACKGROUND_PATH,
+    BACKGROUND_SIZE,
     FINAL_METRICS_PATH,
     GOLD_TEST,
     GOLD_TRAIN,
@@ -31,6 +34,7 @@ from lol_win.config import (
     MLFLOW_MODEL_NAME,
     MODEL_METADATA_PATH,
     MODEL_PATH,
+    RANDOM_STATE,
     TARGET,
 )
 from lol_win.features.build import FeatureBuilder, WardsClipper, build_features
@@ -204,6 +208,29 @@ def register_model(
     return run.info.run_id, version
 
 
+def export_background(
+    train: pd.DataFrame, path: Path = BACKGROUND_PATH, n: int = BACKGROUND_SIZE
+) -> pd.DataFrame:
+    """Exporta uma amostra do treino (stats brutas) para acompanhar o modelo.
+
+    Serve de referência para o SHAP e de fonte de "partidas reais" no app, deixando o
+    artefato autocontido (o container não tem ``data/``).
+
+    Args:
+        train: Camada gold de treino.
+        path: Parquet de saída.
+        n: Tamanho da amostra.
+
+    Returns:
+        Amostra exportada.
+    """
+    sample = train.sample(n=min(n, len(train)), random_state=RANDOM_STATE)
+    sample = sample[list(INPUT_COLUMNS)].reset_index(drop=True)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sample.to_parquet(path, index=False)
+    return sample
+
+
 def main() -> dict[str, Any]:
     """Executa a Etapa 6B de ponta a ponta.
 
@@ -239,6 +266,7 @@ def main() -> dict[str, Any]:
 
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, MODEL_PATH)
+    export_background(train)
     setup_mlflow()
     run_id, version = register_model(
         model,
@@ -279,4 +307,13 @@ def main() -> dict[str, Any]:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--background-only",
+        action="store_true",
+        help="só exporta models/background.parquet (não reavalia nem registra o modelo)",
+    )
+    if parser.parse_args().background_only:
+        export_background(pd.read_parquet(GOLD_TRAIN))
+    else:
+        main()
