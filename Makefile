@@ -12,7 +12,7 @@ setup: ## Instala dependências e hooks do pre-commit
 	$(UV) pre-commit install
 
 data: ## raw -> bronze (validado com Pandera)
-	@echo "TODO: Etapa 1"
+	$(UV) python -m lol_win.data.ingest
 
 features: ## bronze -> silver -> gold + split treino/teste
 	@echo "TODO: Etapa 4"
