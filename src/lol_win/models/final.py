@@ -24,7 +24,6 @@ from lol_win.analysis.eda import save_figure
 from lol_win.config import (
     AUC_LEAKAGE_ALARM,
     BACKGROUND_PATH,
-    BACKGROUND_SIZE,
     FINAL_METRICS_PATH,
     GOLD_TEST,
     GOLD_TRAIN,
@@ -34,7 +33,6 @@ from lol_win.config import (
     MLFLOW_MODEL_NAME,
     MODEL_METADATA_PATH,
     MODEL_PATH,
-    RANDOM_STATE,
     TARGET,
 )
 from lol_win.features.build import FeatureBuilder, WardsClipper, build_features
@@ -48,8 +46,9 @@ from lol_win.models.calibrate import (
     plot_calibration_curves,
 )
 from lol_win.models.evaluate import bootstrap_metrics, compute_metrics
+from lol_win.models.export import export_background
+from lol_win.models.registry import TuningResult, load_tuning_results
 from lol_win.models.train import setup_mlflow
-from lol_win.models.tune import TuningResult, load_tuning_results
 
 logger = logging.getLogger(__name__)
 
@@ -208,29 +207,6 @@ def register_model(
     return run.info.run_id, version
 
 
-def export_background(
-    train: pd.DataFrame, path: Path = BACKGROUND_PATH, n: int = BACKGROUND_SIZE
-) -> pd.DataFrame:
-    """Exporta uma amostra do treino (stats brutas) para acompanhar o modelo.
-
-    Serve de referência para o SHAP e de fonte de "partidas reais" no app, deixando o
-    artefato autocontido (o container não tem ``data/``).
-
-    Args:
-        train: Camada gold de treino.
-        path: Parquet de saída.
-        n: Tamanho da amostra.
-
-    Returns:
-        Amostra exportada.
-    """
-    sample = train.sample(n=min(n, len(train)), random_state=RANDOM_STATE)
-    sample = sample[list(INPUT_COLUMNS)].reset_index(drop=True)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    sample.to_parquet(path, index=False)
-    return sample
-
-
 def main() -> dict[str, Any]:
     """Executa a Etapa 6B de ponta a ponta.
 
@@ -266,7 +242,7 @@ def main() -> dict[str, Any]:
 
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, MODEL_PATH)
-    export_background(train)
+    export_background(train, BACKGROUND_PATH)
     setup_mlflow()
     run_id, version = register_model(
         model,
@@ -314,6 +290,6 @@ if __name__ == "__main__":
         help="só exporta models/background.parquet (não reavalia nem registra o modelo)",
     )
     if parser.parse_args().background_only:
-        export_background(pd.read_parquet(GOLD_TRAIN))
+        export_background(pd.read_parquet(GOLD_TRAIN), BACKGROUND_PATH)
     else:
         main()

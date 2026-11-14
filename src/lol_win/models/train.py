@@ -5,19 +5,12 @@ import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Final, Literal, get_args
+from typing import Final
 
 import matplotlib.pyplot as plt
 import mlflow
 import pandas as pd
-from lightgbm import LGBMClassifier
-from sklearn.base import BaseEstimator
-from sklearn.dummy import DummyClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, cross_validate
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 
 from lol_win.analysis.eda import save_figure
 from lol_win.config import (
@@ -32,80 +25,13 @@ from lol_win.config import (
     TARGET,
     WARDS_CAP_QUANTILE,
 )
-from lol_win.features.build import FeatureSet, make_feature_pipeline
-from lol_win.models.baselines import GoldRuleClassifier
+from lol_win.features.build import FeatureSet
 from lol_win.models.evaluate import SCORING, plot_cv_comparison, summarize_cv
+from lol_win.models.registry import BASELINES, CANDIDATES, ModelName, build_model
 
 logger = logging.getLogger(__name__)
 
-ModelName = Literal["dummy", "gold_rule", "logreg", "random_forest", "lightgbm"]
-MODEL_NAMES: Final[tuple[str, ...]] = get_args(ModelName)
-BASELINES: Final[frozenset[str]] = frozenset({"dummy", "gold_rule"})
-CANDIDATES: Final[tuple[ModelName, ...]] = ("logreg", "random_forest", "lightgbm")
 GOLD_ONLY_BENCHMARK_AUC: Final[float] = 0.803  # LR só com total_gold_diff, CV no treino (Etapa 4)
-
-
-def _model_steps(name: ModelName) -> list[tuple[str, BaseEstimator]]:
-    """Etapas que vêm depois das features, por modelo (hiperparâmetros sem tuning)."""
-    match name:
-        case "dummy":
-            return [("model", DummyClassifier(strategy="prior"))]
-        case "gold_rule":
-            return [("model", GoldRuleClassifier())]
-        case "logreg":
-            return [
-                ("scale", StandardScaler()),
-                ("model", LogisticRegression(C=1.0, max_iter=2000)),
-            ]
-        case "random_forest":
-            return [
-                (
-                    "model",
-                    RandomForestClassifier(
-                        n_estimators=500,
-                        min_samples_leaf=20,
-                        n_jobs=-1,
-                        random_state=RANDOM_STATE,
-                    ),
-                )
-            ]
-        case "lightgbm":
-            return [
-                (
-                    "model",
-                    LGBMClassifier(
-                        n_estimators=400,
-                        learning_rate=0.03,
-                        num_leaves=15,
-                        min_child_samples=40,
-                        subsample=0.8,
-                        subsample_freq=1,
-                        colsample_bytree=0.8,
-                        random_state=RANDOM_STATE,
-                        verbose=-1,
-                    ),
-                )
-            ]
-    raise ValueError(f"Modelo desconhecido: {name!r}. Opções: {MODEL_NAMES}")
-
-
-def build_model(
-    name: ModelName,
-    feature_set: FeatureSet = "diffs",
-    wards_quantile: float | None = WARDS_CAP_QUANTILE,
-) -> Pipeline:
-    """Monta o pipeline completo: stats brutas → features → modelo.
-
-    Args:
-        name: Modelo (baseline ou candidato).
-        feature_set: Conjunto de features.
-        wards_quantile: Quantil do teto de wards (``None`` desliga).
-
-    Returns:
-        ``Pipeline`` não ajustado.
-    """
-    features = make_feature_pipeline(feature_set, wards_quantile)
-    return Pipeline([*features.steps, *_model_steps(name)])
 
 
 @dataclass(frozen=True)

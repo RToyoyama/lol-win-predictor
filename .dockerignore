@@ -1,0 +1,23 @@
+# Contexto mínimo: pyproject/uv.lock, src/, data/raw/ e as métricas usadas pelo export.
+.git
+.github
+.venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+.ipynb_checkpoints
+data/bronze
+data/silver
+data/gold
+models
+mlruns
+mlartifacts
+mlflow.db
+notebooks
+reports/figures
+docs
+tests
+**/*:Zone.Identifier
+.env
+.env.*

@@ -1391,24 +1391,16 @@ wheels = [
 name = "lol-win"
 version = "0.1.0"
 source = { editable = "." }
+default-groups = ["dev", "serve", "train"]
 dependencies = [
-    { name = "fastapi" },
     { name = "joblib" },
     { name = "lightgbm" },
     { name = "matplotlib" },
-    { name = "mlflow" },
-    { name = "optuna" },
     { name = "pandas" },
     { name = "pandera" },
     { name = "pyarrow" },
     { name = "pydantic" },
     { name = "scikit-learn" },
-    { name = "scipy" },
-    { name = "seaborn" },
-    { name = "shap" },
-    { name = "statsmodels" },
-    { name = "streamlit" },
-    { name = "uvicorn", extra = ["standard"] },
 ]
 
 [package.dev-dependencies]
@@ -1423,26 +1415,32 @@ dev = [
     { name = "pytest-cov" },
     { name = "ruff" },
 ]
+serve = [
+    { name = "fastapi" },
+    { name = "shap" },
+    { name = "statsmodels" },
+    { name = "streamlit" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+train = [
+    { name = "mlflow" },
+    { name = "optuna" },
+    { name = "scipy" },
+    { name = "seaborn" },
+    { name = "shap" },
+    { name = "statsmodels" },
+]
 
 [package.metadata]
 requires-dist = [
-    { name = "fastapi", specifier = ">=0.115" },
     { name = "joblib", specifier = ">=1.4" },
     { name = "lightgbm", specifier = ">=4.5" },
     { name = "matplotlib", specifier = ">=3.9" },
-    { name = "mlflow", specifier = ">=2.16" },
-    { name = "optuna", specifier = ">=4.0" },
     { name = "pandas", specifier = ">=2.2" },
     { name = "pandera", specifier = ">=0.20" },
     { name = "pyarrow", specifier = ">=17.0" },
     { name = "pydantic", specifier = ">=2.8" },
     { name = "scikit-learn", specifier = ">=1.5" },
-    { name = "scipy", specifier = ">=1.13" },
-    { name = "seaborn", specifier = ">=0.13" },
-    { name = "shap", specifier = ">=0.46" },
-    { name = "statsmodels", specifier = ">=0.14" },
-    { name = "streamlit", specifier = ">=1.38" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
 ]
 
 [package.metadata.requires-dev]
@@ -1456,6 +1454,21 @@ dev = [
     { name = "pytest", specifier = ">=8.3" },
     { name = "pytest-cov", specifier = ">=5.0" },
     { name = "ruff", specifier = ">=0.6" },
+]
+serve = [
+    { name = "fastapi", specifier = ">=0.115" },
+    { name = "shap", specifier = ">=0.46" },
+    { name = "statsmodels", specifier = ">=0.14" },
+    { name = "streamlit", specifier = ">=1.38" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
+]
+train = [
+    { name = "mlflow", specifier = ">=2.16" },
+    { name = "optuna", specifier = ">=4.0" },
+    { name = "scipy", specifier = ">=1.13" },
+    { name = "seaborn", specifier = ">=0.13" },
+    { name = "shap", specifier = ">=0.46" },
+    { name = "statsmodels", specifier = ">=0.14" },
 ]
 
 [[package]]

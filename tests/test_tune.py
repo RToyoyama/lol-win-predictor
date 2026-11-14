@@ -7,14 +7,8 @@ import pytest
 from lol_win.config import INPUT_COLUMNS, RANDOM_STATE, TARGET
 from lol_win.data.clean import to_silver
 from lol_win.data.ingest import read_raw, to_bronze
-from lol_win.models.tune import (
-    TUNED_MODELS,
-    build_tuned_model,
-    load_tuning_results,
-    suggest_params,
-    summarize_study,
-    tune_model,
-)
+from lol_win.models.registry import build_tuned_model, load_tuning_results
+from lol_win.models.tune import TUNED_MODELS, suggest_params, summarize_study, tune_model
 
 
 @pytest.fixture(scope="module")

@@ -19,7 +19,7 @@ from lol_win.app.logic import (
 from lol_win.config import INPUT_COLUMNS, PROJECT_ROOT, RANDOM_STATE, TARGET
 from lol_win.data.clean import to_silver
 from lol_win.data.ingest import read_raw, to_bronze
-from lol_win.models.train import build_model
+from lol_win.models.registry import build_model
 
 APP_PATH = str(PROJECT_ROOT / "src" / "lol_win" / "app" / "streamlit_app.py")
 

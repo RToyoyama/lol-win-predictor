@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help setup data features train mlflow-ui tune evaluate api app test lint format docker-up
+.PHONY: help setup data features train mlflow-ui tune evaluate api app test lint format docker-up docker-down export-model
 
 UV := uv run
 export MLFLOW_DISABLE_AGENT_HINT := 1
@@ -47,5 +47,12 @@ format: ## Corrige lint e formata
 	$(UV) ruff check --fix .
 	$(UV) ruff format .
 
-docker-up: ## Sobe api + app via docker compose
-	docker compose up --build
+docker-up: ## Sobe api (8000) + app (8501) via docker compose
+	docker compose up --build -d --wait
+	@echo "API: http://localhost:8000/docs · App: http://localhost:8501"
+
+docker-down: ## Derruba os containers
+	docker compose down
+
+export-model: ## Reconstrói o modelo campeão a partir da config versionada (usado no Docker)
+	$(UV) python -m lol_win.models.export

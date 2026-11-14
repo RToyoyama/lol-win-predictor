@@ -13,8 +13,7 @@ from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
 from lol_win.config import CV_FOLDS, RANDOM_STATE
 from lol_win.models.evaluate import compute_metrics
-from lol_win.models.train import ModelName
-from lol_win.models.tune import TuningResult, build_tuned_model
+from lol_win.models.registry import ModelName, TuningResult, build_tuned_model
 
 CalibrationMethod = Literal["none", "sigmoid", "isotonic"]
 CALIBRATION_METHODS: Final[tuple[str, ...]] = get_args(CalibrationMethod)
@@ -33,6 +32,19 @@ class Variant:
     def name(self) -> str:
         """Nome legível (ex.: ``logreg · sigmoid``)."""
         return f"{self.model} · {self.calibration}"
+
+    @classmethod
+    def from_name(cls, name: str) -> "Variant":
+        """Reconstrói a variante a partir do nome (ex.: ``"logreg · none"``).
+
+        Args:
+            name: Nome gerado por ``Variant.name``.
+
+        Returns:
+            Variante correspondente.
+        """
+        model, calibration = (part.strip() for part in name.split("·"))
+        return cls(model, calibration)  # type: ignore[arg-type]
 
     @property
     def complexity(self) -> tuple[int, int]:

@@ -8,7 +8,6 @@ import argparse
 import json
 import logging
 import tempfile
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
 
@@ -18,27 +17,26 @@ import numpy as np
 import optuna
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, cross_validate
-from sklearn.pipeline import Pipeline
 
 from lol_win.analysis.eda import save_figure
 from lol_win.config import (
     CV_FOLDS,
     GOLD_TRAIN,
     INPUT_COLUMNS,
-    METRICS_DIR,
     RANDOM_STATE,
     TARGET,
+    TUNING_RESULTS_PATH,
 )
 from lol_win.features.build import FeatureSet
 from lol_win.models.evaluate import SCORING, summarize_cv
-from lol_win.models.train import ModelName, build_model, setup_mlflow
+from lol_win.models.registry import ModelName, TuningResult, build_tuned_model
+from lol_win.models.train import setup_mlflow
 
 logger = logging.getLogger(__name__)
 
 TUNED_MODELS: Final[tuple[ModelName, ...]] = ("logreg", "lightgbm")
 DEFAULT_TRIALS: Final[dict[str, int]] = {"logreg": 50, "lightgbm": 100}
 TUNABLE_FEATURE_SETS: Final[list[str]] = ["diffs", "diffs_core"]
-TUNING_RESULTS_PATH: Final[Path] = METRICS_DIR / "tuning_results.json"
 
 
 def suggest_params(trial: optuna.Trial, name: ModelName) -> tuple[FeatureSet, dict[str, Any]]:
@@ -74,21 +72,6 @@ def suggest_params(trial: optuna.Trial, name: ModelName) -> tuple[FeatureSet, di
             "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
         }
     raise ValueError(f"Sem espaço de busca para {name!r}. Opções: {TUNED_MODELS}")
-
-
-def build_tuned_model(name: ModelName, feature_set: FeatureSet, params: dict[str, Any]) -> Pipeline:
-    """Monta o pipeline do modelo com os hiperparâmetros dados.
-
-    Args:
-        name: Modelo.
-        feature_set: Conjunto de features.
-        params: Hiperparâmetros do estimador final.
-
-    Returns:
-        ``Pipeline`` não ajustado.
-    """
-    pipeline = build_model(name, feature_set)
-    return pipeline.set_params(**{f"model__{key}": value for key, value in params.items()})
 
 
 def tune_model(
@@ -132,27 +115,6 @@ def tune_model(
     )
     study.optimize(objective, n_trials=n_trials)
     return study
-
-
-@dataclass(frozen=True)
-class TuningResult:
-    """Resumo do melhor trial de um estudo."""
-
-    model: ModelName
-    feature_set: FeatureSet
-    params: dict[str, Any]
-    metrics: dict[str, float]
-    n_trials: int
-
-    def to_dict(self) -> dict[str, Any]:
-        """Serializa para JSON."""
-        return {
-            "model": self.model,
-            "feature_set": self.feature_set,
-            "params": self.params,
-            "metrics": self.metrics,
-            "n_trials": self.n_trials,
-        }
 
 
 def summarize_study(name: ModelName, study: optuna.Study) -> TuningResult:
@@ -269,19 +231,6 @@ def main(
         save_figure(fig, "tune_optimization_history")
         plt.close(fig)
     return results
-
-
-def load_tuning_results(path: Path = TUNING_RESULTS_PATH) -> dict[str, TuningResult]:
-    """Lê os resultados salvos do tuning.
-
-    Args:
-        path: JSON gerado por ``main``.
-
-    Returns:
-        Resultados por modelo.
-    """
-    raw = json.loads(path.read_text())
-    return {name: TuningResult(**payload) for name, payload in raw.items()}
 
 
 if __name__ == "__main__":

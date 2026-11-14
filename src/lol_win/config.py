@@ -55,6 +55,7 @@ INPUT_COLUMNS: Final[tuple[str, ...]] = (
 )
 WARDS_CAP_QUANTILE: Final[float] = 0.99
 
+TUNING_RESULTS_PATH: Final[Path] = METRICS_DIR / "tuning_results.json"
 MODEL_PATH: Final[Path] = Path(os.environ.get("LOL_WIN_MODEL_PATH", MODELS_DIR / "model.joblib"))
 MODEL_METADATA_PATH: Final[Path] = MODEL_PATH.with_name("metadata.json")
 BACKGROUND_PATH: Final[Path] = MODEL_PATH.with_name("background.parquet")

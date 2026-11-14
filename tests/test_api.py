@@ -14,7 +14,7 @@ from lol_win.config import INPUT_COLUMNS, RANDOM_STATE, TARGET, TEAM_STATS
 from lol_win.data.clean import to_silver
 from lol_win.data.ingest import read_raw, to_bronze
 from lol_win.models.predict import BAND_LABELS, predict_proba, probability_band
-from lol_win.models.train import build_model
+from lol_win.models.registry import build_model
 
 EXAMPLE = MatchStats.model_config["json_schema_extra"]["examples"][0]
 

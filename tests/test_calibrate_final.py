@@ -18,7 +18,7 @@ from lol_win.models.calibrate import (
 from lol_win.models.evaluate import bootstrap_metrics, compute_metrics
 from lol_win.models.final import LeakageAlarmError, check_leakage, gold_rule_probabilities
 from lol_win.models.predict import load_model, predict_proba
-from lol_win.models.tune import TuningResult
+from lol_win.models.registry import TuningResult
 
 LOGREG = TuningResult(
     model="logreg",

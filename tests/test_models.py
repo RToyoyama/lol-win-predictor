@@ -9,15 +9,8 @@ from lol_win.data.clean import to_silver
 from lol_win.data.ingest import read_raw, to_bronze
 from lol_win.models.baselines import GoldRuleClassifier
 from lol_win.models.evaluate import SCORING, summarize_cv
-from lol_win.models.train import (
-    CANDIDATES,
-    MODEL_NAMES,
-    ExperimentConfig,
-    build_model,
-    default_grid,
-    run_grid,
-    setup_mlflow,
-)
+from lol_win.models.registry import CANDIDATES, MODEL_NAMES, build_model
+from lol_win.models.train import ExperimentConfig, default_grid, run_grid, setup_mlflow
 
 
 @pytest.fixture(scope="module")
